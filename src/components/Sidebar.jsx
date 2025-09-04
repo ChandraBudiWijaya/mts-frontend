@@ -39,6 +39,12 @@ const navGroups = [
     ],
   },
   {
+    title: 'Report',
+    items: [
+      { to: '/report', label: 'Report', icon: ClipboardList },
+    ],
+  },
+  {
     title: 'Account',
     items: [
       { to: '/logout', label: 'Sign Out', icon: LogOut },

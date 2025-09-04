@@ -8,6 +8,9 @@ import Lokasi from './pages/Lokasi'
 import LokasiDetail from './pages/LokasiDetail'
 import User from './pages/User'
 import UserForm from './pages/UserForm'
+import Report from './pages/Report'
+import RBAC from './pages/RBAC'
+import RBACEdit from './pages/RBACEdit'
 
 // Material-UI theme configuration
 const theme = createTheme({
@@ -86,6 +89,10 @@ function App() {
             <Route path="/lokasi/:id" element={<LokasiDetail />} />
             <Route path="/user" element={<User />} />
             <Route path="/user/new" element={<UserForm />} />
+            <Route path="/report" element={<Report />} />
+            <Route path="/rbac" element={<RBAC />} />
+            <Route path="/rbac/new" element={<RBACEdit />} />
+            <Route path="/rbac/:id" element={<RBACEdit />} />
           </Route>
         </Routes>
       </Router>
