@@ -1,9 +1,13 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
-import Layout from './components/Layout/Layout'
+import MainLayout from './layouts/MainLayout'
 import Dashboard from './pages/Dashboard'
 import Login from './pages/Login'
+import Lokasi from './pages/Lokasi'
+import LokasiDetail from './pages/LokasiDetail'
+import User from './pages/User'
+import UserForm from './pages/UserForm'
 
 // Material-UI theme configuration
 const theme = createTheme({
@@ -75,14 +79,14 @@ function App() {
       <Router>
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/*" element={
-            <Layout>
-              <Routes>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-              </Routes>
-            </Layout>
-          } />
+          <Route element={<MainLayout />}>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/lokasi" element={<Lokasi />} />
+            <Route path="/lokasi/:id" element={<LokasiDetail />} />
+            <Route path="/user" element={<User />} />
+            <Route path="/user/new" element={<UserForm />} />
+          </Route>
         </Routes>
       </Router>
     </ThemeProvider>

@@ -1,150 +1,144 @@
-import {
-  Grid,
-  Card,
-  CardContent,
-  Typography,
-  Box,
-  Avatar,
-} from '@mui/material'
-import {
-  People as PeopleIcon,
-  Assignment as AssignmentIcon,
-  LocationOn as LocationIcon,
-  TrendingUp as TrendingUpIcon,
-} from '@mui/icons-material'
+import Panel from '../components/Panel'
+import DashboardFilters from '../components/filters/DashboardFilters'
+import { MapContainer, TileLayer, ZoomControl, LayersControl } from 'react-leaflet'
+import { PieChart, Pie, Cell, Legend, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts'
 
-const statsCards = [
-  {
-    title: 'Total Mandor',
-    value: '24',
-    icon: <PeopleIcon fontSize="large" />,
-    color: '#0ea5e9',
-    bgColor: '#f0f9ff',
-  },
-  {
-    title: 'Proyek Aktif',
-    value: '8',
-    icon: <AssignmentIcon fontSize="large" />,
-    color: '#10b981',
-    bgColor: '#f0fdf4',
-  },
-  {
-    title: 'Lokasi Kerja',
-    value: '15',
-    icon: <LocationIcon fontSize="large" />,
-    color: '#f59e0b',
-    bgColor: '#fffbeb',
-  },
-  {
-    title: 'Efisiensi',
-    value: '92%',
-    icon: <TrendingUpIcon fontSize="large" />,
-    color: '#8b5cf6',
-    bgColor: '#faf5ff',
-  },
+const donutColors = ['#10b981', '#0ea5e9', '#f97316', '#ef4444']
+
+const activeUsersData = [
+  { name: 'PG 1', value: 14 },
+  { name: 'PG 2', value: 6 },
+  { name: 'PG 3', value: 4 },
 ]
 
-function Dashboard() {
-  return (
-    <Box>
-      <Typography variant="h4" component="h1" gutterBottom className="font-bold text-gray-800">
-        Dashboard
-      </Typography>
-      
-      <Grid container spacing={3}>
-        {statsCards.map((card, index) => (
-          <Grid item xs={12} sm={6} md={3} key={index}>
-            <Card className="h-full hover:shadow-lg transition-shadow duration-300">
-              <CardContent>
-                <Box display="flex" alignItems="center" justifyContent="space-between">
-                  <Box>
-                    <Typography color="textSecondary" gutterBottom variant="body2">
-                      {card.title}
-                    </Typography>
-                    <Typography variant="h4" component="h2" className="font-bold">
-                      {card.value}
-                    </Typography>
-                  </Box>
-                  <Avatar 
-                    sx={{ 
-                      bgcolor: card.bgColor, 
-                      color: card.color,
-                      width: 56,
-                      height: 56,
-                    }}
-                  >
-                    {card.icon}
-                  </Avatar>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
+const visitedLocationsData = [
+  { name: 'PG 1', value: 12 },
+  { name: 'PG 2', value: 9 },
+  { name: 'PG 3', value: 7 },
+]
 
-      <Grid container spacing={3} sx={{ mt: 2 }}>
-        <Grid item xs={12} md={8}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" component="h2" gutterBottom className="font-semibold">
-                Aktivitas Terbaru
-              </Typography>
-              <Box className="space-y-4">
-                {[
-                  { mandor: 'Ahmad Susanto', action: 'Check-in di Proyek Perumahan Griya', time: '08:30' },
-                  { mandor: 'Budi Raharjo', action: 'Menyelesaikan tugas di Lokasi A', time: '10:15' },
-                  { mandor: 'Citra Dewi', action: 'Check-out dari Proyek Mall', time: '17:00' },
-                ].map((activity, index) => (
-                  <Box key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <Box>
-                      <Typography variant="body1" className="font-medium">
-                        {activity.mandor}
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        {activity.action}
-                      </Typography>
-                    </Box>
-                    <Typography variant="body2" className="text-primary-600 font-medium">
-                      {activity.time}
-                    </Typography>
-                  </Box>
-                ))}
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-        
-        <Grid item xs={12} md={4}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" component="h2" gutterBottom className="font-semibold">
-                Status Mandor
-              </Typography>
-              <Box className="space-y-3">
-                {[
-                  { status: 'Aktif', count: 18, color: '#10b981' },
-                  { status: 'Istirahat', count: 4, color: '#f59e0b' },
-                  { status: 'Offline', count: 2, color: '#ef4444' },
-                ].map((item, index) => (
-                  <Box key={index} className="flex items-center justify-between">
-                    <Box className="flex items-center space-x-2">
-                      <Box 
-                        className="w-3 h-3 rounded-full"
-                        sx={{ backgroundColor: item.color }}
-                      />
-                      <Typography variant="body2">{item.status}</Typography>
-                    </Box>
-                    <Typography variant="body2" className="font-medium">
-                      {item.count}
-                    </Typography>
-                  </Box>
-                ))}
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-    </Box>
+const wilayahBars = Array.from({ length: 24 }).map((_, i) => ({
+  name: `W${String(i + 1).padStart(2, '0')}`,
+  total: Math.floor(Math.random() * 20) + 4,
+}))
+
+const mandorCoverage = Array.from({ length: 24 }).map((_, i) => ({
+  name: `Zulian ${i + 1}`,
+  coverage: 10,
+}))
+
+function Dashboard() {
+  const handleSearch = (payload) => {
+    // Later: call backend with payload
+    console.log('Search filters:', payload)
+  }
+
+  return (
+    <div className="space-y-4">
+  
+      <Panel title="Filter">
+        <DashboardFilters onSearch={handleSearch} />
+      </Panel>
+
+      <Panel title="Lokasi">
+        <div className="h-[260px] overflow-hidden rounded-md">
+          <MapContainer
+            center={[-7.2575, 112.7521]}
+            zoom={11}
+            zoomControl={false}
+            className="h-full w-full"
+          >
+            <LayersControl position="topright">
+              <LayersControl.BaseLayer checked name="Satellite">
+                <TileLayer
+                  attribution="Tiles &copy; Esri"
+                  url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                />
+              </LayersControl.BaseLayer>
+              <LayersControl.BaseLayer name="Street Map">
+                <TileLayer
+                  attribution="&copy; OpenStreetMap contributors"
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+              </LayersControl.BaseLayer>
+              <LayersControl.BaseLayer name="Topographic">
+                <TileLayer
+                  attribution="&copy; OpenTopoMap"
+                  url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
+                />
+              </LayersControl.BaseLayer>
+            </LayersControl>
+            <ZoomControl position="topright" />
+          </MapContainer>
+        </div>
+      </Panel>
+
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <Panel title="Total User Aktif">
+          <div className="h-[280px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie data={activeUsersData} dataKey="value" nameKey="name" innerRadius={60} outerRadius={90} paddingAngle={2}>
+                  {activeUsersData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={donutColors[index % donutColors.length]} />
+                  ))}
+                </Pie>
+                <Legend />
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </Panel>
+
+        <Panel title="Total Lokasi Terkunjungi">
+          <div className="h-[280px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie data={visitedLocationsData} dataKey="value" nameKey="name" innerRadius={60} outerRadius={90} paddingAngle={2}>
+                  {visitedLocationsData.map((entry, index) => (
+                    <Cell key={`cell2-${index}`} fill={donutColors[index % donutColors.length]} />
+                  ))}
+                </Pie>
+                <Legend />
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </Panel>
+      </div>
+
+      <Panel title="Total Kunjungan Lokasi Per Wilayah">
+        <div className="h-[280px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={wilayahBars}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} />
+              <XAxis dataKey="name" tick={{ fontSize: 12 }} interval={0} height={40} />
+              <YAxis />
+              <Tooltip />
+              <ReferenceLine y={20} stroke="#d946ef" strokeDasharray="4 4" />
+              <Bar dataKey="total" fill="#16a34a" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </Panel>
+
+      <Panel title="Total Coverage Location Per Mandor">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8">
+          {mandorCoverage.map((m) => (
+            <div key={m.name} className="flex flex-col items-center rounded-md border border-slate-200 p-2">
+              <div className="relative h-16 w-16">
+                <div className="absolute inset-0 rounded-full bg-slate-200" />
+                <div className="absolute inset-1 rounded-full bg-sky-200" />
+                <div className="absolute inset-2 grid place-items-center rounded-full bg-slate-900 text-white text-base font-bold">
+                  {m.coverage}
+                </div>
+              </div>
+              <div className="mt-1 truncate text-center text-[11px] text-slate-600">{m.name}</div>
+            </div>
+          ))}
+        </div>
+      </Panel>
+    </div>
   )
 }
 
